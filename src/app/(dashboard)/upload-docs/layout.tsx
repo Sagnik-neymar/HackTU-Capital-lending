@@ -6,14 +6,15 @@ type Props = {
 }
 
 const UploadLayout = async ({ children }: Props) => {
-
     return (
         <div className="container h-screen flex justify-center items-center">
             <div className="flex flex-col w-full items-center py-24">
                 <h2 className="text-4xl font-bold text-themeTextBlack">
                     LendX.
                 </h2>
-                <h5 className="text-[1vw] font-semibold text-zinc-500 mt-4">Upload your Bank Statement pdf.</h5>
+                <h5 className="text-[1vw] font-semibold text-zinc-500 mt-4">
+                    Upload your Bank Statement pdf.
+                </h5>
                 <BackdropGradient
                     className="w-4/12 h-2/6 opacity-40"
                     container="flex flex-col items-center"

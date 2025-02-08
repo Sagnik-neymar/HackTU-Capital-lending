@@ -4,7 +4,6 @@ import {
     HoverMenuProps,
     LANDING_PAGE_MENU,
     MenuProps,
-    
 } from "./menus"
 import { ComparitiveDataProps } from "./comparitive"
 import { COMPARITIVE_DATA } from "./comparitive"
@@ -25,5 +24,4 @@ export const LENDX_CONSTANTS: LendXConstantsProps = {
     signInForm: SIGN_IN_FORM,
     // uploadForm: FILE_UPLOAD_FORM,   // todo
     comparitiveData: COMPARITIVE_DATA,
-
 }
