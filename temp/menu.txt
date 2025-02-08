@@ -1,0 +1,45 @@
+import puppeteer from "puppeteer";
+
+export async function getTweetIdsFromPage(pageUrl: string) {
+    const browser = await puppeteer.launch({ headless: true }); // Change to false for debugging
+    const page = await browser.newPage();
+
+    const YOUR_AUTH_TOKEN = "32c9bb4ae070b837bb8c2f832c33124f8fd4f1b6"
+    const YOUR_CT0 = "3583f0a82801328b0156a6279cba16f9cf75e295e03d1aca031bde6121ca96ff2cab708882e0aaa8fa818090ddaeab7e7ad66a60f2d7553553a7c5cfeb59cd860db69282c82a4259c44651959da4b2bf"
+    const YOUR_GUEST_ID = "v1%3A173705935010685606"
+    const YOUR_TWID = "u%3D1752089602389848064"
+
+    // Set Twitter login cookies
+    const cookies = [
+        { name: "auth_token", value: YOUR_AUTH_TOKEN, domain: ".x.com" },
+        { name: "ct0", value: YOUR_CT0, domain: ".x.com" },
+        { name: "guest_id", value: YOUR_GUEST_ID, domain: ".x.com" },
+        { name: "twid", value: YOUR_TWID, domain: ".x.com" },
+    ];
+    await page.setCookie(...cookies);
+
+    console.log(`Opening Twitter URL: ${pageUrl}`);
+    await page.goto(pageUrl, { waitUntil: "networkidle2" });
+
+    // Scroll down to load more tweets
+    for (let i = 0; i < 3; i++) {
+        await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Extract tweet IDs
+    const tweetIds = await page.evaluate(() => {
+        const tweetLinks = Array.from(document.querySelectorAll("a"))
+            .map(a => a.href)
+            .filter(href => href.includes("/status/"));
+
+        const tweetIdSet = new Set(
+            tweetLinks.map(url => url.match(/status\/(\d+)/)?.[1]).filter(Boolean)
+        );
+
+        return Array.from(tweetIdSet);
+    });
+
+    await browser.close();
+    return tweetIds;
+}

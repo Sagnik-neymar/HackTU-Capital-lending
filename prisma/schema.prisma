@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId     String  @unique
+  firstname   String?
+  lastname    String?
+  phoneNumber String  @unique
+  panNumber   String  @unique
+  image       String?
+
+  createdAt DateTime @default(now())
+}
+
+model Pan {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  panNumber   String @unique
+  phoneNumber String @unique
+  banks       Bank[]
+
+  createdAt DateTime @default(now())
+}
+
+model Bank {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  accountNumber String
+  panId         String @db.Uuid
+  pan           Pan    @relation(fields: [panId], references: [id], onDelete: Cascade) // Keep cascade delete for bank accounts
+
+  createdAt DateTime @default(now())
+}
+
+model HdfcTweets {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  tweetText String
+
+  createdAt DateTime @default(now())
+}
+
+model SbiTweets {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  tweetText String
+
+  createdAt DateTime @default(now())
+}
+
+model IciciTweets {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  tweetText String
+
+  createdAt DateTime @default(now())
+}
+
+model PnbTweets {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  tweetText String
+
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,60 @@
+"use client"
+
+import React, { useEffect, useRef } from "react";
+
+// Extend window type to include `twttr`
+declare global {
+    interface Window {
+        twttr?: {
+            widgets: {
+                createTweet: (
+                    tweetId: string,
+                    element: HTMLElement,
+                    options?: Record<string, unknown>
+                ) => void;
+            };
+        };
+    }
+}
+
+interface TweetDisplayProps {
+    tweetId: string;
+}
+
+const TweetDisplay: React.FC<TweetDisplayProps> = ({ tweetId }) => {
+    const tweetRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const loadTwitterScript = () => {
+            if (!window.twttr) {
+                const script = document.createElement("script");
+                script.src = "https://platform.twitter.com/widgets.js";
+                script.async = true;
+                script.charset = "utf-8";
+                document.body.appendChild(script);
+            }
+        };
+
+        loadTwitterScript();
+
+        const renderTweet = () => {
+            if (window.twttr && window.twttr.widgets) {
+                if (tweetRef.current) {
+                    tweetRef.current.innerHTML = ""; // Clear previous tweet before adding a new one
+                    window.twttr.widgets.createTweet(tweetId, tweetRef.current, {
+                        theme: "light", // Use "dark" for dark mode
+                        align: "center", // Center-align tweet
+                    });
+                }
+            } else {
+                setTimeout(renderTweet, 500); // Retry after 500ms if `twttr` isn't ready
+            }
+        };
+
+        renderTweet();
+    }, [tweetId]);
+
+    return <div ref={tweetRef} className="my-4 max-w-md mx-auto"></div>;
+};
+
+export default TweetDisplay;
