@@ -38,8 +38,7 @@ yarn-error.log*
 next-env.d.ts
 
 # ignored folders
-src/app/(auth)
-src/app/(dashboard)
+
 
 #ignored not important files
 public/loondry_vid1.mp4
