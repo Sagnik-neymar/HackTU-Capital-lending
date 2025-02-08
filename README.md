@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Research sources
+
+```bash
+https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10142322
+```
+
 ## Getting Started
 
 First, run the development server:
