@@ -21,16 +21,16 @@ export const PricingSection = (props: Props) => {
                     Pricing Plans That Fit Your Right
                 </GradientText>
                 <p className="text-sm md:text-center text-left text-muted-foreground mt-6">
-                    LendX is a revolutionary AI powered loondry solution to,{" "}
+                    LendX is a revolutionary AI powered lending solution to,{" "}
                     <br className="hidden md:block" />
-                    collaborate, and cultivate meaningful relationships
+                    improve the loan origination process.
                 </p>
             </BackdropGradient>
             <Card className="p-7 mt-10 md:w-auto w-full bg-zinc-100 border-zinc-300 hover:bg-zinc-200 transition-all">
                 <div className="flex flex-col gap-2">
-                    <CardTitle>99/m</CardTitle>
+                    <CardTitle>₹ 100</CardTitle>
                     <CardDescription className="text-[#706e6d]">
-                        Great if you’re just getting started
+                        Per Bank statement.
                     </CardDescription>
                     <Link href="#" className="w-full mt-3">
                         <Button
@@ -45,23 +45,23 @@ export const PricingSection = (props: Props) => {
                     <p>Features</p>
                     <span className="flex gap-2 mt-3 items-center">
                         <Check />
-                        10+ Clothes in a single session
+                        Advanced analytics.
                     </span>
                     <span className="flex gap-2 items-center">
                         <Check />
-                        More detergent
+                        Link multiple Bank accounts
                     </span>
                     <span className="flex gap-2 items-center">
                         <Check />
-                        AI powered cleaning
+                        Recurring Payments
                     </span>
                     <span className="flex gap-2 items-center">
                         <Check />
-                        Get clothes faster
+                        More Graphs on your face
                     </span>
                     <span className="flex gap-2 items-center">
                         <Check />
-                        Regular service
+                        We won't leak your data
                     </span>
                 </div>
             </Card>

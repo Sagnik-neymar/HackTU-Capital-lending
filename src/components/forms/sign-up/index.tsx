@@ -51,7 +51,7 @@ const SignUpForm = (props: Props) => {
 
             {verifying ? (
                 <Button type="submit" className="rounded-2xl">
-                    <Loader loading={creating}>Sign Up with Email</Loader>
+                    <Loader loading={creating}>Sign Up with OTP</Loader>
                 </Button>
             ) : (
                 <Button

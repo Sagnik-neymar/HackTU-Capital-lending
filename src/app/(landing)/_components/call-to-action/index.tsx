@@ -11,15 +11,15 @@ const CallToAction = () => {
                 className="text-[35px] md:text-[40px] lg:text-[55px] xl:text-[70px] 2xl:text-[80px] leading-tight font-semibold"
                 element="H1"
             >
-                AI Powered Loondry Service.
+                AI Powered Lending Solution.
             </GradientText>
             <p className="text-sm md:text-center text-left text-muted-foreground mt-5">
-                LendX is an AI powered Loondry solution, which in collaboration
+                LendX is an AI powered Lending solution, which simplifies
                 <br className="md:hidden" />
-                with mangla laundramat, <br className="hidden md:block" /> has
-                changed the game, of laundry to better wash clothes
+                the loan origination , <br className="hidden md:block" /> process
+                by improving the user experience
                 <br className="md:hidden" />
-                and get you a girlfriend
+                and providing a secure auth flow.
             </p>
             <div className="flex md:flex-row flex-col md:justify-center gap-5 md:mt-5 w-full">
                 <Button
