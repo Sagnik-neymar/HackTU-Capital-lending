@@ -1,49 +1,46 @@
-"use client";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { client } from "@/lib/prisma";
+"use client"
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
+import { client } from "@/lib/prisma"
 
-import { sbiFetch, iciciFetch, hdfcFetch } from "@/actions/tweet-fetch";
+import { sbiFetch, iciciFetch, hdfcFetch } from "@/actions/tweet-fetch"
 
-
-
-
-let interval: any;
+let interval: any
 
 type Card = {
-    id: number;
-    name: string;
-    content: React.ReactNode;
-};
+    id: number
+    name: string
+    content: React.ReactNode
+}
 
 // ✅ Fetch tweets based on selected bank
 export async function fetchTweetCards(bank: string): Promise<Card[]> {
     try {
-        let tweets: { id: string; name: string; tweetText: string }[] = [];
+        let tweets: { id: string; name: string; tweetText: string }[] = []
 
         if (bank === "icici") {
-            tweets = await iciciFetch();
+            tweets = await iciciFetch()
         } else if (bank === "sbi") {
-            tweets = await sbiFetch();
+            tweets = await sbiFetch()
         } else if (bank === "hdfc") {
-            tweets = await hdfcFetch();
+            tweets = await hdfcFetch()
         }
 
-        console.log(`Fetched ${tweets.length} tweets for ${bank}:`, tweets); // ✅ Debugging
+        console.log(`Fetched ${tweets.length} tweets for ${bank}:`, tweets) // ✅ Debugging
 
         // ✅ Convert id to a number and shuffle
         const CARDS: Card[] = tweets.map((tweet) => ({
             id: Number(tweet.id),
             name: tweet.name,
             content: <p>{tweet.tweetText}</p>,
-        }));
+        }))
 
-        CARDS.sort(() => Math.random() - 0.5); // ✅ Shuffle randomly
+        CARDS.sort(() => Math.random() - 0.5) // ✅ Shuffle randomly
 
-        return CARDS;
+        return CARDS
     } catch (error) {
-        console.error("Error fetching tweets:", error);
-        return [];
+        console.error("Error fetching tweets:", error)
+        return []
     }
 }
 
@@ -53,47 +50,49 @@ export const CardStack = ({
     scaleFactor = 0.06,
     maxCards = 4,
 }: {
-    bank: string;
-    offset?: number;
-    scaleFactor?: number;
-    maxCards?: number;
+    bank: string
+    offset?: number
+    scaleFactor?: number
+    maxCards?: number
 }) => {
-    const [cards, setCards] = useState<Card[]>([]);
-    const [isLoading, setIsLoading] = useState(true); // ✅ Added loading state
+    const [cards, setCards] = useState<Card[]>([])
+    const [isLoading, setIsLoading] = useState(true) // ✅ Added loading state
 
     useEffect(() => {
         async function loadCards() {
-            setIsLoading(true); // Start loading
-            const fetchedCards = await fetchTweetCards(bank);
-            setCards(fetchedCards);
-            setIsLoading(false); // Stop loading
+            setIsLoading(true) // Start loading
+            const fetchedCards = await fetchTweetCards(bank)
+            setCards(fetchedCards)
+            setIsLoading(false) // Stop loading
         }
 
-        loadCards();
-    }, [bank]); // ✅ Re-fetch tweets when `bank` changes
+        loadCards()
+    }, [bank]) // ✅ Re-fetch tweets when `bank` changes
 
     useEffect(() => {
-        startFlipping();
-        return () => clearInterval(interval);
-    }, [cards]);
+        startFlipping()
+        return () => clearInterval(interval)
+    }, [cards])
 
     const startFlipping = () => {
         interval = setInterval(() => {
             setCards((prevCards) => {
-                if (prevCards.length === 0) return prevCards;
-                const newArray = [...prevCards];
-                newArray.unshift(newArray.pop()!);
-                return newArray;
-            });
-        }, 5000);
-    };
+                if (prevCards.length === 0) return prevCards
+                const newArray = [...prevCards]
+                newArray.unshift(newArray.pop()!)
+                return newArray
+            })
+        }, 5000)
+    }
 
     return (
         <div className="relative h-60 w-60 md:h-60 md:w-96">
             {isLoading ? (
                 <p className="text-center text-gray-500">Loading tweets...</p>
             ) : cards.length === 0 ? (
-                <p className="text-center text-gray-500">No tweets available.</p>
+                <p className="text-center text-gray-500">
+                    No tweets available.
+                </p>
             ) : (
                 cards.slice(0, maxCards).map((card, index) => (
                     <motion.div
@@ -119,5 +118,5 @@ export const CardStack = ({
                 ))
             )}
         </div>
-    );
-};
+    )
+}

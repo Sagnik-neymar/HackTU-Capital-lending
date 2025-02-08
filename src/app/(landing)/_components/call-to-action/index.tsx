@@ -16,8 +16,8 @@ const CallToAction = () => {
             <p className="text-sm md:text-center text-left text-muted-foreground mt-5">
                 LendX is an AI powered Lending solution, which simplifies
                 <br className="md:hidden" />
-                the loan origination , <br className="hidden md:block" /> process
-                by improving the user experience
+                the loan origination , <br className="hidden md:block" />{" "}
+                process by improving the user experience
                 <br className="md:hidden" />
                 and providing a secure auth flow.
             </p>

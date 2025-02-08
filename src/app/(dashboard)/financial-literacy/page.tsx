@@ -1,8 +1,6 @@
-import { AnimatedTestimonialsDemo } from "./_components/animated-testimonials-demo";
+import { AnimatedTestimonialsDemo } from "./_components/animated-testimonials-demo"
 import BackdropGradient from "@/components/global/backdrop-gradient"
 import GlassCard from "@/components/global/glass-card"
-
-
 
 export default function FinancialLiteracyPage() {
     return (
@@ -12,5 +10,5 @@ export default function FinancialLiteracyPage() {
                 <AnimatedTestimonialsDemo />
             </div>
         </div>
-    );
+    )
 }

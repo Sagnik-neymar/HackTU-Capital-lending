@@ -16,7 +16,11 @@ const SignInPage = () => {
                 </div>
                 <Separator orientation="horizontal" className="bg-themeGray" />
             </div>
-            <Link href={"/sign-up"}><p className="text-indigo-700 text-[0.9vw]">Don't have an account? signup</p></Link>
+            <Link href={"/sign-up"}>
+                <p className="text-indigo-700 text-[0.9vw]">
+                    Don't have an account? signup
+                </p>
+            </Link>
         </>
     )
 }

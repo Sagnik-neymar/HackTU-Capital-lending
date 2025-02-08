@@ -1,7 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactProductionProfiling: false,
     images: {
-        domains: ["images.unsplash.com"], // Add any other domains you need here
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: "ucarecdn.com"
+            },
+            {
+                protocol: 'https',
+                hostname: "images.unsplash.com"
+            },
+        ]
     },
 }
 

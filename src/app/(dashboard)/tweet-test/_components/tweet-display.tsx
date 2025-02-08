@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react"
 
 // Extend window type to include `twttr`
 declare global {
@@ -10,52 +10,60 @@ declare global {
                 createTweet: (
                     tweetId: string,
                     element: HTMLElement,
-                    options?: Record<string, unknown>
-                ) => void;
-            };
-        };
+                    options?: Record<string, unknown>,
+                ) => void
+            }
+        }
     }
 }
 
 interface TweetDisplayProps {
-    tweetId: string;
-    width?: number; // Custom width
-    scale?: number; // Scale factor
+    tweetId: string
+    width?: number // Custom width
+    scale?: number // Scale factor
 }
 
-const TweetDisplay: React.FC<TweetDisplayProps> = ({ tweetId, width = 500, scale = 1 }) => {
-    const tweetRef = useRef<HTMLDivElement>(null);
+const TweetDisplay: React.FC<TweetDisplayProps> = ({
+    tweetId,
+    width = 500,
+    scale = 1,
+}) => {
+    const tweetRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const loadTwitterScript = () => {
             if (!window.twttr) {
-                const script = document.createElement("script");
-                script.src = "https://platform.twitter.com/widgets.js";
-                script.async = true;
-                script.charset = "utf-8";
-                document.body.appendChild(script);
+                const script = document.createElement("script")
+                script.src = "https://platform.twitter.com/widgets.js"
+                script.async = true
+                script.charset = "utf-8"
+                document.body.appendChild(script)
             }
-        };
+        }
 
-        loadTwitterScript();
+        loadTwitterScript()
 
         const renderTweet = () => {
             if (window.twttr && window.twttr.widgets) {
                 if (tweetRef.current) {
-                    tweetRef.current.innerHTML = ""; // Clear previous tweet
-                    window.twttr.widgets.createTweet(tweetId, tweetRef.current, {
-                        theme: "light",
-                        align: "center",
-                        maxWidth: width,
-                    });
+                    tweetRef.current.innerHTML = "" // Clear previous tweet
+                    window.twttr.widgets.createTweet(
+                        tweetId,
+                        tweetRef.current,
+                        {
+                            theme: "light",
+                            align: "center",
+                            maxWidth: width,
+                        },
+                    )
                 }
             } else {
-                setTimeout(renderTweet, 500);
+                setTimeout(renderTweet, 500)
             }
-        };
+        }
 
-        renderTweet();
-    }, [tweetId, width]);
+        renderTweet()
+    }, [tweetId, width])
 
     return (
         <div
@@ -68,7 +76,7 @@ const TweetDisplay: React.FC<TweetDisplayProps> = ({ tweetId, width = 500, scale
                 overflow: "hidden",
             }}
         ></div>
-    );
-};
+    )
+}
 
-export default TweetDisplay;
+export default TweetDisplay

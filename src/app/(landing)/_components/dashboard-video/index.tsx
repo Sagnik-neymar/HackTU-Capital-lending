@@ -7,14 +7,17 @@ const DashboardSnippet = (props: Props) => {
         <div className="relative py-20 rounded-2xl">
             <div className="w-full h-3/6 absolute rounded-[50%] radial--blur opacity-40 mx-10" />
             <div className="w-full aspect-video relative rounded-2xl overflow-hidden">
-                <img className="opacity-[0.95] w-full h-auto" src="/dashboard-snippet.avif" alt="" />
+                <img
+                    className="opacity-[0.95] w-full h-auto"
+                    src="/dashboard-snippet.avif"
+                    alt=""
+                />
             </div>
         </div>
     )
 }
 
 export default DashboardSnippet
-
 
 //     < video
 // src = "/loondry_vid1.mp4"

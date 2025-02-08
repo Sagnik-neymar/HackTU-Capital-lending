@@ -4,13 +4,18 @@ import {
     HoverMenuProps,
     LANDING_PAGE_MENU,
     MenuProps,
+    
 } from "./menus"
+import { ComparitiveDataProps } from "./comparitive"
+import { COMPARITIVE_DATA } from "./comparitive"
 
 type LendXConstantsProps = {
     landingPageMenu: MenuProps[]
     hoverMenu: HoverMenuProps[]
     signUpForm: AuthFormProps[]
     signInForm: AuthFormProps[]
+    // uploadForm: UploadFormProps[]   // todo
+    comparitiveData: ComparitiveDataProps[]
 }
 
 export const LENDX_CONSTANTS: LendXConstantsProps = {
@@ -18,4 +23,7 @@ export const LENDX_CONSTANTS: LendXConstantsProps = {
     hoverMenu: HOVER_MENU,
     signUpForm: SIGN_UP_FORM,
     signInForm: SIGN_IN_FORM,
+    // uploadForm: FILE_UPLOAD_FORM,   // todo
+    comparitiveData: COMPARITIVE_DATA,
+
 }

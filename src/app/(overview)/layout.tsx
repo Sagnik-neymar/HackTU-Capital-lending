@@ -1,18 +1,15 @@
-import React from 'react'
+import React from "react"
 import BackdropGradient from "@/components/global/backdrop-gradient"
 import GlassCard from "@/components/global/glass-card"
 
-
-
-
-
 const layout = ({ children }: { children: React.ReactNode }) => {
-
     return (
-        <div className='flex flex-col container relative'>
+        <div className="flex flex-col container relative">
             <div className="container h-screen flex justify-center items-center">
                 <div className="flex flex-col w-full items-center py-24">
-                    <h2 className="text-4xl font-bold text-themeTextBlack">Overview.</h2>
+                    <h2 className="text-4xl font-bold text-themeTextBlack">
+                        Overview.
+                    </h2>
                     <BackdropGradient
                         className="w-4/12 h-2/6 opacity-40"
                         container="flex flex-col items-center"

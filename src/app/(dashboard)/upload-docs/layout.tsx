@@ -1,16 +1,11 @@
-import { onAuthenticatedUser } from "@/actions/auth"
 import BackdropGradient from "@/components/global/backdrop-gradient"
 import GlassCard from "@/components/global/glass-card"
-import { redirect } from "next/navigation"
 
 type Props = {
     children: React.ReactNode
 }
 
-const AuthLayout = async ({ children }: Props) => {
-    const user = await onAuthenticatedUser()
-
-    if (user.status === 200) redirect("/callback/sign-in")
+const UploadLayout = async ({ children }: Props) => {
 
     return (
         <div className="container h-screen flex justify-center items-center">
@@ -18,6 +13,7 @@ const AuthLayout = async ({ children }: Props) => {
                 <h2 className="text-4xl font-bold text-themeTextBlack">
                     LendX.
                 </h2>
+                <h5 className="text-[1vw] font-semibold text-zinc-500 mt-4">Upload your Bank Statement pdf.</h5>
                 <BackdropGradient
                     className="w-4/12 h-2/6 opacity-40"
                     container="flex flex-col items-center"
@@ -31,4 +27,4 @@ const AuthLayout = async ({ children }: Props) => {
     )
 }
 
-export default AuthLayout
+export default UploadLayout
