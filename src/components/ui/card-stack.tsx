@@ -1,51 +1,101 @@
-"use client"
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+"use client";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { client } from "@/lib/prisma";
 
-let interval: any
+import { sbiFetch, iciciFetch, hdfcFetch } from "@/actions/tweet-fetch";
+
+
+
+
+let interval: any;
 
 type Card = {
-    id: number
-    name: string
-    content: React.ReactNode
+    id: number;
+    name: string;
+    content: React.ReactNode;
+};
+
+// ✅ Fetch tweets based on selected bank
+export async function fetchTweetCards(bank: string): Promise<Card[]> {
+    try {
+        let tweets: { id: string; name: string; tweetText: string }[] = [];
+
+        if (bank === "icici") {
+            tweets = await iciciFetch();
+        } else if (bank === "sbi") {
+            tweets = await sbiFetch();
+        } else if (bank === "hdfc") {
+            tweets = await hdfcFetch();
+        }
+
+        console.log(`Fetched ${tweets.length} tweets for ${bank}:`, tweets); // ✅ Debugging
+
+        // ✅ Convert id to a number and shuffle
+        const CARDS: Card[] = tweets.map((tweet) => ({
+            id: Number(tweet.id),
+            name: tweet.name,
+            content: <p>{tweet.tweetText}</p>,
+        }));
+
+        CARDS.sort(() => Math.random() - 0.5); // ✅ Shuffle randomly
+
+        return CARDS;
+    } catch (error) {
+        console.error("Error fetching tweets:", error);
+        return [];
+    }
 }
 
 export const CardStack = ({
-    items,
+    bank,
     offset = 10,
     scaleFactor = 0.06,
-    maxCards = 4, // NEW: Limit the number of stacked cards,
+    maxCards = 4,
 }: {
-    items: Card[]
-    offset?: number
-    scaleFactor?: number
-    maxCards?: number // NEW PROP: Maximum number of visible cards
+    bank: string;
+    offset?: number;
+    scaleFactor?: number;
+    maxCards?: number;
 }) => {
-    const [cards, setCards] = useState<Card[]>(items)
+    const [cards, setCards] = useState<Card[]>([]);
+    const [isLoading, setIsLoading] = useState(true); // ✅ Added loading state
 
     useEffect(() => {
-        startFlipping()
-        return () => clearInterval(interval)
-    }, [items]) // Restart flipping if items change
+        async function loadCards() {
+            setIsLoading(true); // Start loading
+            const fetchedCards = await fetchTweetCards(bank);
+            setCards(fetchedCards);
+            setIsLoading(false); // Stop loading
+        }
+
+        loadCards();
+    }, [bank]); // ✅ Re-fetch tweets when `bank` changes
+
+    useEffect(() => {
+        startFlipping();
+        return () => clearInterval(interval);
+    }, [cards]);
 
     const startFlipping = () => {
         interval = setInterval(() => {
             setCards((prevCards) => {
-                if (prevCards.length === 0) return prevCards
-                const newArray = [...prevCards]
-                newArray.unshift(newArray.pop()!)
-                return newArray
-            })
-        }, 5000)
-    }
+                if (prevCards.length === 0) return prevCards;
+                const newArray = [...prevCards];
+                newArray.unshift(newArray.pop()!);
+                return newArray;
+            });
+        }, 5000);
+    };
 
     return (
         <div className="relative h-60 w-60 md:h-60 md:w-96">
-            {cards.slice(0, maxCards).map(
-                (
-                    card,
-                    index, // ✅ Only display `maxCards`
-                ) => (
+            {isLoading ? (
+                <p className="text-center text-gray-500">Loading tweets...</p>
+            ) : cards.length === 0 ? (
+                <p className="text-center text-gray-500">No tweets available.</p>
+            ) : (
+                cards.slice(0, maxCards).map((card, index) => (
                     <motion.div
                         key={card.id}
                         className="absolute dark:bg-black bg-white h-60 w-60 md:h-60 md:w-96 rounded-3xl p-4 shadow-xl border border-neutral-200 dark:border-white/[0.1] shadow-black/[0.1] dark:shadow-white/[0.05] flex flex-col justify-between"
@@ -53,28 +103,21 @@ export const CardStack = ({
                         animate={{
                             top: index * -offset,
                             scale: 1 - index * scaleFactor,
-                            zIndex: maxCards - index, // ✅ Maintain correct stacking order
+                            zIndex: maxCards - index,
                         }}
                     >
-                        <div className="font-normal text-neutral-700 dark:text-neutral-200">
+                        <div className="font-normal text-neutral-700 dark:text-neutral-200 text-[1vw]">
                             {card.content}
                         </div>
                         <div>
                             <div className="text-blue-600 font-medium dark:text-white flex items-center">
-                                <p>@ </p>
-                                <p>{card.name}</p>
+                                <p className="text-[1vw]">@ </p>
+                                <p className="text-[1vw]">{card.name}</p>
                             </div>
                         </div>
                     </motion.div>
-                ),
+                ))
             )}
         </div>
-    )
-}
-
-{
-    /* <p className="text-blue-600 font-medium dark:text-white flex items-center">
-    <div>@</div>
-    <div>{card.name}</div>
-</p> */
-}
+    );
+};
