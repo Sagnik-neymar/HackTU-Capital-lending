@@ -1,121 +1,113 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { FileUploaderRegular } from "@uploadcare/react-uploader/next"
-import "@uploadcare/react-uploader/core.css"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button";
 import {
     Form,
-    FormItem,
     FormControl,
     FormField,
+    FormItem,
     FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import axios from "axios"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z.object({
-    password: z.string().min(0).max(50),
-})
+  password: z.string().optional(),
+});
 
-export default function App() {
-    const router = useRouter()
+export default function UploadToS3() {
+  const router = useRouter();
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-    // 1. Define your form.
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            password: "",
-        },
-    })
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { password: "" },
+  });
 
-    // 2. Define a submit handler.
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(fileUrl, values)
-        try {
-            const payload = {
-                fileUrl,
-                password: values.password,
-            }
-            const response = await axios.post(
-                "http://localhost:5000/upload",
-                payload,
-            ) // ✅ Send the file URL to the server
+  const handleFileChange = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-            if (response.status === 200) {
-                form.reset()
-                router.push("/bank-statement-analysis")
-            } else {
-                toast("An unknown error occurred")
-            }
-        } catch (error) {
-            console.error(error)
-            if (error instanceof Error) {
-                return toast(error.message)
-            }
-            return toast("An unknown error occurred")
-        }
+    setUploading(true);
+
+    // Step 1: get presigned URL
+    const { data } = await axios.post("/api/s3-presign", {
+      fileName: file.name,
+      fileType: file.type,
+    });
+
+    // Step 2: upload directly to S3
+    await axios.put(data.uploadUrl, file, {
+      headers: { "Content-Type": file.type },
+      onUploadProgress: (p) =>
+        console.log("Progress:", Math.round((p.loaded / p.total!) * 100)),
+    });
+
+setFileUrl(data.signedGetUrl);
+    toast("File uploaded successfully!");
+    setUploading(false);
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!fileUrl) return toast("File not uploaded!");
+
+    try {
+      const payload = {
+        pdf_url:fileUrl,
+        password: values.password,
+      };
+
+      const response = await axios.post("http://localhost:5000/upload", payload);
+
+      if (response.status === 200) {
+        form.reset();
+        router.push("/bank-statement-analysis");
+      }
+    } catch (err) {
+      toast("Error uploading");
+      console.log(err);
     }
+  };
 
-    const [fileUrl, setFileUrl] = useState<string | null>(null)
+  return (
+    <div className="space-y-6">
+      {/* File Input */}
+      <input
+        type="file"
+        accept="application/pdf"
+        onChange={handleFileChange}
+        className="block w-full border p-3 rounded-md"
+      />
 
-    // Handle file upload and extract CDN URL
-    const handleFileUpload = (file: any) => {
-        if (file?.cdnUrl) {
-            setFileUrl(file.cdnUrl) // ✅ Store the file URL in state
-            console.log("Uploaded file URL:", file.cdnUrl) // ✅ Log the URL
-        }
-    }
+      {uploading && <p>Uploading...</p>}
 
-    return (
-        <div>
-            <div className="h-[4vw] p-3 flex flex-col gap-36 border-[1px] border-zinc-400 rounded-lg mb-5">
-                <FileUploaderRegular
-                    sourceList="local, camera, facebook, gdrive"
-                    cameraModes="photo" // No video uploads
-                    classNameUploader="uc-light"
-                    pubkey="d3ddeba52ae0e92ce492"
-                    onFileUploadSuccess={handleFileUpload} // ✅ Capture uploaded file details
-                    accept="application/pdf"
-                    onFileUploadProgress={(progress) =>
-                        console.log("Upload progress:", progress.uploadProgress)
-                    }
-                />
-            </div>
-            {/* password field */}
-            {fileUrl && (
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-8"
-                    >
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        Enter Password if protected pdf
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="password"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit">Submit</Button>
-                    </form>
-                </Form>
-            )}
-        </div>
-    )
+      {fileUrl && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password (if PDF is protected)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="password" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      )}
+    </div>
+  );
 }
