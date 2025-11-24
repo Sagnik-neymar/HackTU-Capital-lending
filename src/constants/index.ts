@@ -13,7 +13,6 @@ type LendXConstantsProps = {
     hoverMenu: HoverMenuProps[]
     signUpForm: AuthFormProps[]
     signInForm: AuthFormProps[]
-    // uploadForm: UploadFormProps[]   // todo
     comparitiveData: ComparitiveDataProps[]
 }
 
@@ -22,6 +21,5 @@ export const LENDX_CONSTANTS: LendXConstantsProps = {
     hoverMenu: HOVER_MENU,
     signUpForm: SIGN_UP_FORM,
     signInForm: SIGN_IN_FORM,
-    // uploadForm: FILE_UPLOAD_FORM,   // todo
     comparitiveData: COMPARITIVE_DATA,
 }

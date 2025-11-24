@@ -26,7 +26,7 @@ const BankList = ({ banks }: { banks: Bank[] }) => {
                     {banks.map((bank) => (
                         <li
                             key={bank.id}
-                            className="p-4 border rounded-lg shadow-md bg-white dark:bg-gray-900"
+                            className="p-4 border rounded-lg shadow-sm bg-white dark:bg-gray-900"
                         >
                             <p className="font-bold text-lg">{bank.name}</p>
                             <p className="text-gray-600 dark:text-gray-300">
@@ -41,7 +41,7 @@ const BankList = ({ banks }: { banks: Bank[] }) => {
             <Button
                 variant="default"
                 className="mt-4"
-                onClick={() => router.push("/")} // ✅ Redirect to "/dashboard"
+                onClick={() => router.push("/upload-docs")} // ✅ Redirect to "/dashboard"
             >
                 Continue
             </Button>

@@ -85,12 +85,14 @@ type checkProps = {
 
 export const checkPanExist = async ({ phoneNumber, panNumber }: checkProps) => {
     // attempting to find user on which the pan or phone might already exist
+    console.log(phoneNumber)
     const pan = await client.pan.findFirst({
         where: {
             phoneNumber,
             panNumber,
         },
     })
+    console.log(pan)
 
     return pan
 }

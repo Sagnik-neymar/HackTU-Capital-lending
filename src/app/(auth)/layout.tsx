@@ -10,7 +10,7 @@ type Props = {
 const AuthLayout = async ({ children }: Props) => {
     const user = await onAuthenticatedUser()
 
-    if (user.status === 200) redirect("/callback/sign-in")
+    if (user.status === 200) redirect("/upload-docs")
 
     return (
         <div className="container h-screen flex justify-center items-center">

@@ -1,8 +1,7 @@
 import { checkPanExist, onSignUpUser, userAlreadyExist } from "@/actions/auth"
-import { SignUpSchema } from "@/components/forms/sign-up/schema"
 import { SignInSchema } from "@/components/forms/sign-in/schema"
+import { SignUpSchema } from "@/components/forms/sign-up/schema"
 import { useSignIn, useSignUp } from "@clerk/nextjs"
-import { OAuthStrategy } from "@clerk/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
@@ -40,11 +39,13 @@ export const useAuthSignUp = () => {
                 description: "Oops! something went wrong(onGenerateCode)",
             })
 
+        console.log(getValues("pan"), getValues("phone"))
         // checking if a pan with the following combination exists or not
         const pan_found = await checkPanExist({
             phoneNumber: getValues("phone"),
             panNumber: getValues("pan"),
         })
+        console.log(pan_found)
         if (!pan_found) return toast("wrong PAN or Phone number!")
 
         // checking if the user aleady exists
@@ -58,13 +59,15 @@ export const useAuthSignUp = () => {
         try {
             if (pan && phone && password) {
                 await signUp.create({
-                    phoneNumber: getValues("phone"),
+                    phoneNumber: `+91${getValues("phone")}`,
                     password: getValues("password"),
                 })
 
-                await signUp.preparePhoneNumberVerification({
-                    strategy: "phone_code",
-                })
+                const verfification =
+                    await signUp.preparePhoneNumberVerification({
+                        strategy: "phone_code",
+                    })
+                console.log("verification: ", verfification)
 
                 setVerifying(true)
             } else {
@@ -86,6 +89,7 @@ export const useAuthSignUp = () => {
 
         try {
             setCreating(true)
+            console.log(values.pan)
             const completeSignUp = await signUp.attemptPhoneNumberVerification({
                 code,
             })
@@ -168,6 +172,7 @@ export const useAuthSignIn = () => {
             })
         try {
             // checking if a pan with the following combination exists or not
+            console.log(getValues("phone"))
             const pan_found = await checkPanExist({
                 phoneNumber: getValues("phone"),
                 panNumber: getValues("pan"),
@@ -185,7 +190,7 @@ export const useAuthSignIn = () => {
                 toast("Success", {
                     description: "Welcome back!",
                 })
-                router.push("/callback/sign-in")
+                router.push("/upload-docs")
             }
         } catch (error: any) {
             if (error.errors[0].code === "form_password_incorrect")

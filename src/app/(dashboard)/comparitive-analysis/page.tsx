@@ -1,4 +1,4 @@
-import { BellRing, Check } from "lucide-react"
+import { Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -10,12 +10,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
 import { LENDX_CONSTANTS } from "@/constants"
+import { Xcom } from "@/icons/X"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { CardStack } from "@/components/ui/card-stack"
 
 const Page = () => {
     return (
-        <div className="container h-screen flex justify-center items-center flex-wrap gap-4">
+        <div className="container h-screen flex justify-center items-center flex-wrap gap-4 -mt-[3vw]">
             {LENDX_CONSTANTS.comparitiveData.map((data, index) => (
                 <Card
                     key={index}
@@ -62,10 +64,25 @@ const Page = () => {
                         </div>
                     </CardContent>
 
-                    <CardFooter>
+                    <CardFooter className="flex flex-col gap-4">
                         <Button className="w-full">
                             <Check className="mr-2" /> Apply Now
                         </Button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="w-full bg-white text-themeBlack"
+                                >
+                                    <Xcom /> Check Tweets
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="w-[40vw] h-[25vw] border-none flex justify-between items-center">
+                                <div className="flex justify-between items-center translate-x-10">
+                                    <CardStack bank={data.name} />
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </CardFooter>
                 </Card>
             ))}
@@ -74,41 +91,3 @@ const Page = () => {
 }
 
 export default Page
-
-{
-    /* // < Card className = { cn("w-[380px]",) } >
-    //             <CardHeader>
-    //                 <CardTitle className="flex gap-3 items-center">
-    //                     <div className="border-[1px] w-[3vw] h-[3vw] flex justify-center items-center">
-    //                         <img src="/stripe.png" alt="img" />
-    //                     </div>
-    //                     <div className="text-[1vw] font-bold">
-    //                         HDFC Bank
-    //                     </div>
-    //                 </CardTitle>
-    //                 <CardDescription>Your options.</CardDescription>
-    //             </CardHeader>
-    //             <CardContent className="grid gap-4">
-    //                 <div className="flex flex-col items-start rounded-md border p-4 text-left space-y-2">
-    //                     <div className="text-[0.75vw] font-semibold text-zinc-600 flex itmes-center gap-2">
-    //                         <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" /> Max Loan Amount:
-    //                     </div>
-    //                     <div className="text-[0.75vw] font-semibold text-zinc-600 flex itmes-center gap-2">
-    //                         <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />Rate of Interest:
-    //                     </div>
-    //                     <div className="text-[0.75vw] font-semibold text-zinc-600 flex itmes-center gap-2">
-    //                         <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />Tenure Upto:
-    //                     </div>
-    //                     <div className="text-[0.75vw] font-semibold text-zinc-600 flex itmes-center gap-2">
-    //                         <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />Processing Fee:
-    //                     </div>
-    //                 </div>
-    //             </CardContent>
-
-    //             <CardFooter>
-    //                 <Button className="w-full">
-    //                     <Check /> Apply Now
-    //                 </Button>
-    //             </CardFooter>
-    //         </Card > */
-}
