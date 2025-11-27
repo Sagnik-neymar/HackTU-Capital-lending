@@ -19,7 +19,7 @@ const UploadLayout = async ({ children }: Props) => {
                     className="w-4/12 h-2/6 opacity-40"
                     container="flex flex-col items-center"
                 >
-                    <GlassCard className="xs:w-full md:w-7/12 lg:w-5/12 xl:w-4/12 p-7 mt-16">
+                    <GlassCard className=" flex flex-col justify-center items-center xs:w-full md:w-7/12 lg:w-5/12 xl:w-4/12 p-7 mt-16">
                         {children}
                     </GlassCard>
                 </BackdropGradient>

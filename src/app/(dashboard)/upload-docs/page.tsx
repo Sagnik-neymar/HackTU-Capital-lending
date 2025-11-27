@@ -9,6 +9,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { LoaderOne } from "@/components/ui/loader";
 import { setAnalysisData } from "@/store/analysisSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -27,6 +28,7 @@ export default function UploadToS3() {
   const router = useRouter();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [analysing, setAnalysing] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,6 +65,7 @@ setFileUrl(data.signedGetUrl);
     if (!fileUrl) return toast("File not uploaded!");
 
     try {
+      setAnalysing(true);
       const payload = {
         pdf_url:fileUrl,
         password: values.password,
@@ -73,6 +76,7 @@ setFileUrl(data.signedGetUrl);
       if (response.status === 200) {
         dispatch(setAnalysisData(response.data));
         form.reset();
+        setAnalysing(false);
         router.push("/bank-statement-analysis");
       }
     } catch (err) {
@@ -81,7 +85,7 @@ setFileUrl(data.signedGetUrl);
     }
   };
 
-  return (
+  return !analysing ? (
     <div className="space-y-6">
       {/* File Input */}
       <input
@@ -114,5 +118,7 @@ setFileUrl(data.signedGetUrl);
         </Form>
       )}
     </div>
+  ) : (
+    <LoaderOne/>
   );
 }
