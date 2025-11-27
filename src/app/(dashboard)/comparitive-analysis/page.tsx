@@ -1,6 +1,5 @@
 import { Check } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -10,10 +9,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { CardStack } from "@/components/ui/card-stack"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { LENDX_CONSTANTS } from "@/constants"
 import { Xcom } from "@/icons/X"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { CardStack } from "@/components/ui/card-stack"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 const Page = () => {
     return (
@@ -65,9 +66,12 @@ const Page = () => {
                     </CardContent>
 
                     <CardFooter className="flex flex-col gap-4">
+                        <Link target="_blank" className="w-full" href={data.apply_link!} >
                         <Button className="w-full">
                             <Check className="mr-2" /> Apply Now
                         </Button>
+                        
+                        </Link>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button

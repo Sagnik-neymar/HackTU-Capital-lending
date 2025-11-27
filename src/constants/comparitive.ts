@@ -6,6 +6,7 @@ export type ComparitiveDataProps = {
     interest_rate: string
     tenure: string
     processing_fee: string
+    apply_link?: string
 }
 
 export const COMPARITIVE_DATA: ComparitiveDataProps[] = [
@@ -17,6 +18,7 @@ export const COMPARITIVE_DATA: ComparitiveDataProps[] = [
         interest_rate: "10.85% - 21.00%",
         tenure: "1 - 6 years",
         processing_fee: "0.50% - 1.50%",
+        apply_link: "https://applyonline.hdfcbank.com/personal-loans.html?p_id=&gad_campaignid=22226848698"
     },
     {
         id: 2,
@@ -26,6 +28,7 @@ export const COMPARITIVE_DATA: ComparitiveDataProps[] = [
         interest_rate: "11.1% - ww%",
         tenure: "1 - 5 years",
         processing_fee: "0.50% - 2%",
+        apply_link: "https://sbi.bank.in/web/personal-banking/loans/personal-loans"
     },
     {
         id: 3,
@@ -35,5 +38,6 @@ export const COMPARITIVE_DATA: ComparitiveDataProps[] = [
         interest_rate: "6.70% - 8.05%",
         tenure: "1 - 5 years",
         processing_fee: "0.50% - 1.50%",
+        apply_link: "https://loan.icicibank.com/asset-portal-all/apply-now?loanType=pl"
     },
 ]
