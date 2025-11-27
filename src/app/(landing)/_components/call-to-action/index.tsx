@@ -1,8 +1,7 @@
 import GradientText from "@/components/global/gradient-text"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { BadgePlus } from "@/icons"
-import React from "react"
+import Link from "next/link"
 
 const CallToAction = () => {
     return (
@@ -22,12 +21,12 @@ const CallToAction = () => {
                 and providing a secure auth flow.
             </p>
             <div className="flex md:flex-row flex-col md:justify-center gap-5 md:mt-5 w-full">
-                <Button
+                {/* <Button
                     variant="outline"
                     className="rounded-xl bg-transparent text-base"
                 >
                     Watch Demo
-                </Button>
+                </Button> */}
                 <Link href="/sign-up">
                     <Button className="rounded-xl text-base flex gap-2 w-full">
                         <BadgePlus /> Get Started
