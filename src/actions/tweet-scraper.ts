@@ -1,13 +1,14 @@
-import puppeteer from "puppeteer"
-import { setTimeout } from "timers/promises"
-import { client } from "@/lib/prisma"
+// import { client } from "@/lib/prisma"
+import puppeteer from "puppeteer";
+import { setTimeout } from "timers/promises";
+import { client } from "../lib/prisma";
 
 // Twitter login cookies
-const YOUR_AUTH_TOKEN = "32c9bb4ae070b837bb8c2f832c33124f8fd4f1b6"
+const YOUR_AUTH_TOKEN = "5a163072acfbd7e9dab95277e1e83a6b30913c04"
 const YOUR_CT0 =
-    "3583f0a82801328b0156a6279cba16f9cf75e295e03d1aca031bde6121ca96ff2cab708882e0aaa8fa818090ddaeab7e7ad66a60f2d7553553a7c5cfeb59cd860db69282c82a4259c44651959da4b2bf"
-const YOUR_GUEST_ID = "v1%3A173705935010685606"
-const YOUR_TWID = "u%3D1752089602389848064"
+    "35cfef1448eb8b8ca5596169f36019f2906dd6c90bb86a493395341402ad511bdcb2cbd744b090dd6eedac445cf3d967e6c46044a2da06e36005dd7f92b6ac841041ca576add6162691ec7b711b01355"
+const YOUR_GUEST_ID = "v1%3A175542392799424048"
+const YOUR_TWID = "u%3D1993834135933341696"
 
 export async function getTweetDataFromPage(pageUrl: string) {
     const browser = await puppeteer.launch({ headless: true })
@@ -55,7 +56,7 @@ export async function getTweetDataFromPage(pageUrl: string) {
     // Store the first 5 tweets in Prisma
     try {
         if (tweets.length > 0) {
-            await client.sbiTweets.createMany({
+            await client.hdfcTweets.createMany({
                 data: tweets,
                 skipDuplicates: true, // Avoid duplicate entries
             })
@@ -78,3 +79,4 @@ const icici_url =
     "https://x.com/search?q=icici%20personal%20loan%20issues%20&src=typed_query&f=live"
 const pnb_url =
     "https://x.com/search?q=pnb%20personal%20loan%20issues%20&src=typed_query&f=live"
+

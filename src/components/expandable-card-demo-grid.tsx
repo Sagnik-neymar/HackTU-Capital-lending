@@ -1,30 +1,15 @@
 "use client";
 
-import BackdropGradient from "@/components/global/backdrop-gradient";
-import GlassCard from "@/components/global/glass-card";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
-import { useOutsideClick } from "@/hooks/use-outside-click";
-import { RootState } from "@/redux/store";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useOutsideClick } from "@/hooks/use-outside-click";
 
-const  Page =  ()=> {
+export default function ExpandableCardDemo() {
   const [active, setActive] = useState<(typeof cards)[number] | boolean | null>(
     null
   );
   const id = useId();
-  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
-
-      const analysisData = useSelector(
-        (state: RootState) => state.analysis.analysisData
-    )
-
-    console.log(analysisData)
-    
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -45,80 +30,8 @@ const  Page =  ()=> {
 
   useOutsideClick(ref, () => setActive(null));
 
-  const cards = [
-  {
-    description: "Lana Del Rey",
-    title: "Expenses by Category",
-    src: analysisData?.graphs?.expenses_by_category || "",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Lana Del Rey, an iconic American singer-songwriter, is celebrated for
-          her melancholic and cinematic music style. Born Elizabeth Woolridge
-          Grant in New York City, she has captivated audiences worldwide with
-          her haunting voice and introspective lyrics. <br /> <br /> Her songs
-          often explore themes of tragic romance, glamour, and melancholia,
-          drawing inspiration from both contemporary and vintage pop culture.
-          With a career that has seen numerous critically acclaimed albums, Lana
-          Del Rey has established herself as a unique and influential figure in
-          the music industry, earning a dedicated fan base and numerous
-          accolades.
-        </p>
-      );
-    },
-  },
-  {
-    description: "Babbu Maan",
-    title: "Income vs Expenses",
-    src:analysisData?.graphs?.income_vs_expenses || "",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Babu Maan, a legendary Punjabi singer, is renowned for his soulful
-          voice and profound lyrics that resonate deeply with his audience. Born
-          in the village of Khant Maanpur in Punjab, India, he has become a
-          cultural icon in the Punjabi music industry. <br /> <br /> His songs
-          often reflect the struggles and triumphs of everyday life, capturing
-          the essence of Punjabi culture and traditions. With a career spanning
-          over two decades, Babu Maan has released numerous hit albums and
-          singles that have garnered him a massive fan following both in India
-          and abroad.
-        </p>
-      );
-    },
-  },
-
-  {
-    description: "Metallica",
-    title: "Monthly Savings",
-    src: analysisData?.graphs?.monthly_savings || "",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Metallica, an iconic American heavy metal band, is renowned for their
-          powerful sound and intense performances that resonate deeply with
-          their audience. Formed in Los Angeles, California, they have become a
-          cultural icon in the heavy metal music industry. <br /> <br /> Their
-          songs often reflect themes of aggression, social issues, and personal
-          struggles, capturing the essence of the heavy metal genre. With a
-          career spanning over four decades, Metallica has released numerous hit
-          albums and singles that have garnered them a massive fan following
-          both in the United States and abroad.
-        </p>
-      );
-    },
-  },
-
-];
-
   return (
-    <div className="flex justify-center items-center" >
+    <>
       <AnimatePresence>
         {active && typeof active === "object" && (
           <motion.div
@@ -155,7 +68,7 @@ const  Page =  ()=> {
             <motion.div
               layoutId={`card-${active.title}-${id}`}
               ref={ref}
-              className="w-full max-w-[800px]  h-full md:h-fit md:min-h-[30rem]  flex flex-col justify-center items-center bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
+              className="w-full max-w-[500px]  h-full md:h-fit md:max-h-[90%]  flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
             >
               <motion.div layoutId={`image-${active.title}-${id}`}>
                 <img
@@ -163,28 +76,28 @@ const  Page =  ()=> {
                   height={200}
                   src={active.src}
                   alt={active.title}
-                  className="w-full h-80 lg:h-96 sm:rounded-tr-lg sm:rounded-tl-lg object-fill object-top"
+                  className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-top"
                 />
               </motion.div>
 
               <div>
                 <div className="flex justify-between items-start p-4">
-                  <div className="w-full">
+                  <div className="">
                     <motion.h3
                       layoutId={`title-${active.title}-${id}`}
-                      className="font-semibold text-neutral-700 text-center dark:text-neutral-200 text-base"
+                      className="font-medium text-neutral-700 dark:text-neutral-200 text-base"
                     >
                       {active.title}
                     </motion.h3>
-                    {/* <motion.p
+                    <motion.p
                       layoutId={`description-${active.description}-${id}`}
                       className="text-neutral-600 dark:text-neutral-400 text-base"
                     >
                       {active.description}
-                    </motion.p> */}
+                    </motion.p>
                   </div>
 
-                  {/* <motion.a
+                  <motion.a
                     layout
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -194,9 +107,9 @@ const  Page =  ()=> {
                     className="px-4 py-3 text-sm rounded-full font-bold bg-green-500 text-white"
                   >
                     {active.ctaText}
-                  </motion.a> */}
+                  </motion.a>
                 </div>
-                {/* <div className="pt-4 relative px-4">
+                <div className="pt-4 relative px-4">
                   <motion.div
                     layout
                     initial={{ opacity: 0 }}
@@ -208,13 +121,13 @@ const  Page =  ()=> {
                       ? active.content()
                       : active.content}
                   </motion.div>
-                </div> */}
+                </div>
               </div>
             </motion.div>
           </div>
         ) : null}
       </AnimatePresence>
-      <ul className=" mx-auto  flex w-[50rem] min-h-[95vh] items-center justify-center flex-wrap gap-4">
+      <ul className="max-w-2xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 items-start gap-4">
         {cards.map((card, index) => (
           <motion.div
             layoutId={`card-${card.title}-${id}`}
@@ -229,7 +142,7 @@ const  Page =  ()=> {
                   height={100}
                   src={card.src}
                   alt={card.title}
-                  className="h-60 w-full  rounded-lg object-fill object-top"
+                  className="h-60 w-full  rounded-lg object-cover object-top"
                 />
               </motion.div>
               <div className="flex justify-center items-center flex-col">
@@ -239,38 +152,18 @@ const  Page =  ()=> {
                 >
                   {card.title}
                 </motion.h3>
-                {/* <motion.p
+                <motion.p
                   layoutId={`description-${card.description}-${id}`}
                   className="text-neutral-600 dark:text-neutral-400 text-center md:text-left text-base"
                 >
                   {card.description}
-                </motion.p> */}
+                </motion.p>
               </div>
             </div>
           </motion.div>
         ))}
       </ul>
-      <div className="flex flex-col min-h-[95vh] gap-8  w-96 justify-start items-end" >
-                <BackdropGradient
-                    className="w-4/12 h-2/6 opacity-40"
-                    container="flex flex-col items-center"
-                    >
-                    <GlassCard className="w-fit  p-7 mt-16">
-                    <h1 className="font-bold mb-4" >Bank Statement Analysis</h1>
-<TextGenerateEffect
-  className="whitespace-pre-line"
-  words={analysisData?.summary_text?.replace(/â‚¹/g, "₹")}
-/> 
-                        {/* <p className="whitespace-pre-line" >
-                            {analysisData?.summary_text?.replace(/â‚¹/g, "₹")}
-                        </p> */}
-                    </GlassCard>
-                </BackdropGradient>
-                <InteractiveHoverButton onClick={()=> {router.push('/ai-consult')}} className="justify-self-end"  >Apply For Loan</InteractiveHoverButton>
-                
-      </div>
-
-    </div>
+    </>
   );
 }
 
@@ -307,7 +200,95 @@ export const CloseIcon = () => {
   );
 };
 
+const cards = [
+  {
+    description: "Lana Del Rey",
+    title: "Summertime Sadness",
+    src: "https://assets.aceternity.com/demos/lana-del-rey.jpeg",
+    ctaText: "Visit",
+    ctaLink: "https://ui.aceternity.com/templates",
+    content: () => {
+      return (
+        <p>
+          Lana Del Rey, an iconic American singer-songwriter, is celebrated for
+          her melancholic and cinematic music style. Born Elizabeth Woolridge
+          Grant in New York City, she has captivated audiences worldwide with
+          her haunting voice and introspective lyrics. <br /> <br /> Her songs
+          often explore themes of tragic romance, glamour, and melancholia,
+          drawing inspiration from both contemporary and vintage pop culture.
+          With a career that has seen numerous critically acclaimed albums, Lana
+          Del Rey has established herself as a unique and influential figure in
+          the music industry, earning a dedicated fan base and numerous
+          accolades.
+        </p>
+      );
+    },
+  },
+  {
+    description: "Babbu Maan",
+    title: "Mitran Di Chhatri",
+    src: "https://assets.aceternity.com/demos/babbu-maan.jpeg",
+    ctaText: "Visit",
+    ctaLink: "https://ui.aceternity.com/templates",
+    content: () => {
+      return (
+        <p>
+          Babu Maan, a legendary Punjabi singer, is renowned for his soulful
+          voice and profound lyrics that resonate deeply with his audience. Born
+          in the village of Khant Maanpur in Punjab, India, he has become a
+          cultural icon in the Punjabi music industry. <br /> <br /> His songs
+          often reflect the struggles and triumphs of everyday life, capturing
+          the essence of Punjabi culture and traditions. With a career spanning
+          over two decades, Babu Maan has released numerous hit albums and
+          singles that have garnered him a massive fan following both in India
+          and abroad.
+        </p>
+      );
+    },
+  },
 
-
-
-export default Page
+  {
+    description: "Metallica",
+    title: "For Whom The Bell Tolls",
+    src: "https://assets.aceternity.com/demos/metallica.jpeg",
+    ctaText: "Visit",
+    ctaLink: "https://ui.aceternity.com/templates",
+    content: () => {
+      return (
+        <p>
+          Metallica, an iconic American heavy metal band, is renowned for their
+          powerful sound and intense performances that resonate deeply with
+          their audience. Formed in Los Angeles, California, they have become a
+          cultural icon in the heavy metal music industry. <br /> <br /> Their
+          songs often reflect themes of aggression, social issues, and personal
+          struggles, capturing the essence of the heavy metal genre. With a
+          career spanning over four decades, Metallica has released numerous hit
+          albums and singles that have garnered them a massive fan following
+          both in the United States and abroad.
+        </p>
+      );
+    },
+  },
+  {
+    description: "Lord Himesh",
+    title: "Aap Ka Suroor",
+    src: "https://assets.aceternity.com/demos/aap-ka-suroor.jpeg",
+    ctaText: "Visit",
+    ctaLink: "https://ui.aceternity.com/templates",
+    content: () => {
+      return (
+        <p>
+          Himesh Reshammiya, a renowned Indian music composer, singer, and
+          actor, is celebrated for his distinctive voice and innovative
+          compositions. Born in Mumbai, India, he has become a prominent figure
+          in the Bollywood music industry. <br /> <br /> His songs often feature
+          a blend of contemporary and traditional Indian music, capturing the
+          essence of modern Bollywood soundtracks. With a career spanning over
+          two decades, Himesh Reshammiya has released numerous hit albums and
+          singles that have garnered him a massive fan following both in India
+          and abroad.
+        </p>
+      );
+    },
+  },
+];

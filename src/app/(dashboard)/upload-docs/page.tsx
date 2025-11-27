@@ -2,18 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { setAnalysisData } from "@/store/analysisSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -30,6 +32,8 @@ export default function UploadToS3() {
     resolver: zodResolver(formSchema),
     defaultValues: { password: "" },
   });
+
+  const dispatch = useDispatch();
 
   const handleFileChange = async (e: any) => {
     const file = e.target.files?.[0];
@@ -67,6 +71,7 @@ setFileUrl(data.signedGetUrl);
       const response = await axios.post("http://localhost:5000/upload", payload);
 
       if (response.status === 200) {
+        dispatch(setAnalysisData(response.data));
         form.reset();
         router.push("/bank-statement-analysis");
       }

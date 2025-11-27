@@ -1,44 +1,39 @@
 "use client"
 
-import React from "react"
-import BackdropGradient from "@/components/global/backdrop-gradient"
-import GlassCard from "@/components/global/glass-card"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
+    FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button"
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
-    SelectValue,
+    SelectValue
 } from "@/components/ui/select"
+import { zodResolver } from "@hookform/resolvers/zod"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 const formSchema = z.object({
-    loan: z.string().min(2, {
-        message: "Minimum Loan amount required.",
-    }),
-    tenure: z.string().min(2, {
-        message: "Minimum Tenure required.",
-    }),
-    category: z.string().min(2, {
-        message: "Category.",
-    }),
+    loan: z.string().min(2, { message: "Minimum Loan amount required." }),
+    tenure: z.string().min(2, { message: "Minimum Tenure required." }),
+    category: z.string().min(2, { message: "Category." }),
+    age: z.string().min(1),
+    income: z.string().min(1),
+    emp_length: z.string().min(1),
+    home_ownership: z.string().default("RENT"),
 })
 
 const index = () => {
@@ -50,6 +45,7 @@ const index = () => {
     const [optiTenure, setoptiTenure] = useState<number>(0)
     const [optiPayable, setoptiPayable] = useState("")
     const [optiTotalInterest, setoptiTotalInterest] = useState("")
+    const router = useRouter();
 
     // 1. Define your form.
     const form1 = useForm<z.infer<typeof formSchema>>({
@@ -62,33 +58,78 @@ const index = () => {
     })
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
-        const loanAmount = parseFloat(values.loan)
-        const tenureMonths = parseFloat(values.tenure)
-        const total_payable_amount =
-            (loanAmount * 12.71 * (1 + 12.71) ** tenureMonths) /
-            ((1 + 12.71) ** tenureMonths - 1) /
-            tenureMonths
-        const emi = total_payable_amount / tenureMonths
-        const total_interest = total_payable_amount - loanAmount
+async function onSubmit(values: z.infer<typeof formSchema>) {
 
-        const opti_emi = emi * 0.85
-        const opti_tenure =
-            Math.log(opti_emi / (opti_emi - (loanAmount * 12.71) / 1200)) /
-            Math.log(1 + 12.71 / 1200)
-        const opti_total_payable_amount = opti_emi * opti_tenure
-        const opti_total_interest = opti_total_payable_amount - loanAmount
+    const loanAmount = parseFloat(values.loan);
+    const tenureMonths = parseFloat(values.tenure);
+    const income = parseFloat(values.income);
 
-        setEMI(emi.toFixed(2))
-        setTotalPayableAmount(total_payable_amount.toFixed(2))
-        setTotalInterest(total_interest.toFixed(2))
+    const loan_percent_income = loanAmount / income;
 
-        setoptiEMI(opti_emi.toFixed(2)) // value in optiEMI
-        setoptiTenure(Math.ceil(parseFloat(opti_tenure.toFixed(2)))) // value in optiTenure
-        setoptiPayable(opti_total_payable_amount.toFixed(2)) // value in optiPayable
-        setoptiTotalInterest(opti_total_interest.toFixed(2)) // value in optiTotalInterest
+    // map frontend categories to model categories
+    const intentMap: any = {
+        health: "MEDICAL",
+        marriage: "PERSONAL",
+        // travel: "TRAVEL",
+        home: "HOMEIMPROVEMENT",
+        education: "EDUCATION",
+    };
+
+    const payload = {
+        person_age: parseFloat(values.age),
+        person_income: income,
+        person_home_ownership: values.home_ownership, // or ask user later
+        person_emp_length: parseFloat(values.emp_length),
+        loan_intent: intentMap[values.category],
+        loan_grade: "B",
+        loan_amnt: loanAmount,
+        loan_percent_income: loan_percent_income,
+        cb_person_default_on_file: "N",
+        cb_person_cred_hist_length: 1
+    };
+
+    // 🔥 CALL PREDICTION API
+    const response = await axios.post("http://localhost:8000/predict", payload);
+    const rate = response.data.predicted_interest_rate;
+
+    // Convert % to decimal (model returns like 12.7)
+    const r = rate / (100 * 12);
+
+    // 🔥 EMI CALCULATION USING predicted rate
+const emi =
+    (loanAmount * r * (1 + r) ** tenureMonths) /
+    ((1 + r) ** tenureMonths - 1);
+
+const total_payable = emi * tenureMonths;
+
+    const total_interest = total_payable - loanAmount;
+
+    // 🔥 OPTIMIZED EMI
+    const opti_emi = emi * 0.85;
+
+    if(opti_emi >= income * 0.75){
+        alert("Optimized EMI exceeds 75% of your income. Please consider increasing tenure or reducing loan amount.");
     }
+
+    // optimized tenure formula
+    const opti_tenure =
+        Math.log(opti_emi / (opti_emi - (loanAmount * r))) /
+        Math.log(1 + r);
+
+    const opti_total_payable = opti_emi * opti_tenure;
+    const opti_interest = opti_total_payable - loanAmount;
+
+    // update UI
+    setEMI(emi.toFixed(2));
+    setTotalPayableAmount(total_payable.toFixed(2));
+    setTotalInterest(total_interest.toFixed(2));
+
+    setoptiEMI(opti_emi.toFixed(2));
+    setoptiTenure(Math.ceil(opti_tenure));
+    setoptiPayable(opti_total_payable.toFixed(2));
+    setoptiTotalInterest(opti_interest.toFixed(2));
+}
+
 
     return (
         <div className="w-full h-full flex px-10 gap-1 justify-center items-center">
@@ -158,8 +199,12 @@ const index = () => {
                                                 <SelectItem value="marriage">
                                                     marriage
                                                 </SelectItem>
-                                                <SelectItem value="travel">
-                                                    Travel
+
+                                                <SelectItem value="home">
+                                                    Home Renovation
+                                                </SelectItem>
+                                                <SelectItem value="education">
+                                                    Education
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -167,12 +212,96 @@ const index = () => {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form1.control}
+                                name="age"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Your Age</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Age"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form1.control}
+                                name="income"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Monthly Income</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Income"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form1.control}
+                                name="emp_length"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Employment Length (months)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Employment Length"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                                                        <FormField
+                                control={form1.control}
+                                name="home_ownership"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Home Ownership Status</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Category" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="RENT">
+                                                    Rent
+                                                </SelectItem>
+                                                <SelectItem value="OWN">
+                                                    Own
+                                                </SelectItem>
+                                                <SelectItem value="MORTGAGE">
+                                                    Mortgage
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
                             <Button type="submit">Submit</Button>
                         </form>
                     </Form>
                 </Card>
             </div>
-            <div className="flex flex-col gap-3 w-full items-center py-24">
+            <div className="flex flex-col gap-6 w-full min-h-[95vh] justify-start items-center py-24">
                 <Card className="w-[32vw] h-[13vw] p-3 flex flex-col">
                     <div className="w-full h-[5vw] text-left pl-3">
                         <h6 className="text-[0.9vw]">Your EMI is</h6>
@@ -243,7 +372,14 @@ const index = () => {
                         </div>
                     </div>
                 </Card>
+                <InteractiveHoverButton onClick={()=> {router.push('/comparitive-analysis')}} className="justify-self-end"  >View Loan Options</InteractiveHoverButton>
+                
+
+
+
+
             </div>
+
         </div>
     )
 }
