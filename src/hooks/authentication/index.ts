@@ -120,7 +120,7 @@ export const useAuthSignUp = () => {
                     await setActive({
                         session: completeSignUp.createdSessionId,
                     })
-                    router.push(`/overview`)
+                    router.push(`/upload-docs`)
                 }
                 if (user.status !== 200) {
                     toast("Error", {
@@ -180,7 +180,7 @@ export const useAuthSignIn = () => {
             if (!pan_found) return toast("wrong PAN or Phone number!")
 
             const authenticated = await signIn.create({
-                identifier: phone,
+                identifier: `+91${phone}`,
                 password: password,
             })
 
