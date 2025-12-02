@@ -89,7 +89,7 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
     };
 
     // 🔥 CALL PREDICTION API
-    const response = await axios.post("http://localhost:8000/predict", payload);
+    const response = await axios.post("http://lendx-alb-1532613344.ap-south-1.elb.amazonaws.com/predict", payload);
     const rate = response.data.predicted_interest_rate;
 
     // Convert % to decimal (model returns like 12.7)

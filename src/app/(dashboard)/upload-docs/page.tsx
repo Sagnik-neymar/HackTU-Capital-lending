@@ -71,7 +71,7 @@ setFileUrl(data.signedGetUrl);
         password: values.password,
       };
 
-      const response = await axios.post("http://localhost:5000/upload", payload);
+      const response = await axios.post("http://lendx-alb-1532613344.ap-south-1.elb.amazonaws.com/upload", payload);
 
       if (response.status === 200) {
         dispatch(setAnalysisData(response.data));

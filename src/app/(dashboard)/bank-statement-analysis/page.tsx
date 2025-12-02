@@ -11,7 +11,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
-const  Page =  ()=> {
+type AnalysisData = {
+  graphs?: {
+    expenses_by_category?: string;
+    income_vs_expenses?: string;
+    monthly_savings?: string;
+    [key: string]: string | undefined;
+  };
+  summary_text?: string | null;
+};
+
+const Page = () => {
   const [active, setActive] = useState<(typeof cards)[number] | boolean | null>(
     null
   );
@@ -19,12 +29,11 @@ const  Page =  ()=> {
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
-      const analysisData = useSelector(
-        (state: RootState) => state.analysis.analysisData
-    )
+  const analysisData = useSelector(
+    (state: RootState) => state.analysis.analysisData
+  ) as AnalysisData | null;
 
-    console.log(analysisData)
-    
+  console.log(analysisData);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -46,79 +55,78 @@ const  Page =  ()=> {
   useOutsideClick(ref, () => setActive(null));
 
   const cards = [
-  {
-    description: "Lana Del Rey",
-    title: "Expenses by Category",
-    src: analysisData?.graphs?.expenses_by_category || "",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Lana Del Rey, an iconic American singer-songwriter, is celebrated for
-          her melancholic and cinematic music style. Born Elizabeth Woolridge
-          Grant in New York City, she has captivated audiences worldwide with
-          her haunting voice and introspective lyrics. <br /> <br /> Her songs
-          often explore themes of tragic romance, glamour, and melancholia,
-          drawing inspiration from both contemporary and vintage pop culture.
-          With a career that has seen numerous critically acclaimed albums, Lana
-          Del Rey has established herself as a unique and influential figure in
-          the music industry, earning a dedicated fan base and numerous
-          accolades.
-        </p>
-      );
+    {
+      description: "Lana Del Rey",
+      title: "Expenses by Category",
+      src: analysisData?.graphs?.expenses_by_category || "",
+      ctaText: "Visit",
+      ctaLink: "https://ui.aceternity.com/templates",
+      content: () => {
+        return (
+          <p>
+            Lana Del Rey, an iconic American singer-songwriter, is celebrated for
+            her melancholic and cinematic music style. Born Elizabeth Woolridge
+            Grant in New York City, she has captivated audiences worldwide with
+            her haunting voice and introspective lyrics. <br /> <br /> Her songs
+            often explore themes of tragic romance, glamour, and melancholia,
+            drawing inspiration from both contemporary and vintage pop culture.
+            With a career that has seen numerous critically acclaimed albums, Lana
+            Del Rey has established herself as a unique and influential figure in
+            the music industry, earning a dedicated fan base and numerous
+            accolades.
+          </p>
+        );
+      },
     },
-  },
-  {
-    description: "Babbu Maan",
-    title: "Income vs Expenses",
-    src:analysisData?.graphs?.income_vs_expenses || "",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Babu Maan, a legendary Punjabi singer, is renowned for his soulful
-          voice and profound lyrics that resonate deeply with his audience. Born
-          in the village of Khant Maanpur in Punjab, India, he has become a
-          cultural icon in the Punjabi music industry. <br /> <br /> His songs
-          often reflect the struggles and triumphs of everyday life, capturing
-          the essence of Punjabi culture and traditions. With a career spanning
-          over two decades, Babu Maan has released numerous hit albums and
-          singles that have garnered him a massive fan following both in India
-          and abroad.
-        </p>
-      );
+    {
+      description: "Babbu Maan",
+      title: "Income vs Expenses",
+      src: analysisData?.graphs?.income_vs_expenses || "",
+      ctaText: "Visit",
+      ctaLink: "https://ui.aceternity.com/templates",
+      content: () => {
+        return (
+          <p>
+            Babu Maan, a legendary Punjabi singer, is renowned for his soulful
+            voice and profound lyrics that resonate deeply with his audience. Born
+            in the village of Khant Maanpur in Punjab, India, he has become a
+            cultural icon in the Punjabi music industry. <br /> <br /> His songs
+            often reflect the struggles and triumphs of everyday life, capturing
+            the essence of Punjabi culture and traditions. With a career spanning
+            over two decades, Babu Maan has released numerous hit albums and
+            singles that have garnered him a massive fan following both in India
+            and abroad.
+          </p>
+        );
+      },
     },
-  },
 
-  {
-    description: "Metallica",
-    title: "Monthly Savings",
-    src: analysisData?.graphs?.monthly_savings || "",
-    ctaText: "Visit",
-    ctaLink: "https://ui.aceternity.com/templates",
-    content: () => {
-      return (
-        <p>
-          Metallica, an iconic American heavy metal band, is renowned for their
-          powerful sound and intense performances that resonate deeply with
-          their audience. Formed in Los Angeles, California, they have become a
-          cultural icon in the heavy metal music industry. <br /> <br /> Their
-          songs often reflect themes of aggression, social issues, and personal
-          struggles, capturing the essence of the heavy metal genre. With a
-          career spanning over four decades, Metallica has released numerous hit
-          albums and singles that have garnered them a massive fan following
-          both in the United States and abroad.
-        </p>
-      );
+    {
+      description: "Metallica",
+      title: "Monthly Savings",
+      src: analysisData?.graphs?.monthly_savings || "",
+      ctaText: "Visit",
+      ctaLink: "https://ui.aceternity.com/templates",
+      content: () => {
+        return (
+          <p>
+            Metallica, an iconic American heavy metal band, is renowned for their
+            powerful sound and intense performances that resonate deeply with
+            their audience. Formed in Los Angeles, California, they have become a
+            cultural icon in the heavy metal music industry. <br /> <br /> Their
+            songs often reflect themes of aggression, social issues, and personal
+            struggles, capturing the essence of the heavy metal genre. With a
+            career spanning over four decades, Metallica has released numerous hit
+            albums and singles that have garnered them a massive fan following
+            both in the United States and abroad.
+          </p>
+        );
+      },
     },
-  },
-
-];
+  ];
 
   return (
-    <div className="flex justify-center items-center" >
+    <div className="flex justify-center items-center">
       <AnimatePresence>
         {active && typeof active === "object" && (
           <motion.div
@@ -250,31 +258,36 @@ const  Page =  ()=> {
           </motion.div>
         ))}
       </ul>
-      <div className="flex flex-col min-h-[95vh] gap-8  w-96 justify-start items-end" >
-                <BackdropGradient
-                    className="w-4/12 h-2/6 opacity-40"
-                    container="flex flex-col items-center"
-                    >
-                    <GlassCard className="w-fit  p-7 mt-16">
-                    <h1 className="font-bold mb-4" >Bank Statement Analysis</h1>
-<TextGenerateEffect
-  className="whitespace-pre-line"
-  words={analysisData?.summary_text?.replace(/â‚¹/g, "₹")}
-/> 
-                        {/* <p className="whitespace-pre-line" >
+      <div className="flex flex-col min-h-[95vh] gap-8  w-96 justify-start items-end">
+        <BackdropGradient
+          className="w-4/12 h-2/6 opacity-40"
+          container="flex flex-col items-center"
+        >
+          <GlassCard className="w-fit  p-7 mt-16">
+            <h1 className="font-bold mb-4">Bank Statement Analysis</h1>
+            <TextGenerateEffect
+              className="whitespace-pre-line"
+              words={(analysisData?.summary_text ?? "").replace(/â‚¹/g, "₹")}
+            />
+            {/* <p className="whitespace-pre-line" >
                             {analysisData?.summary_text?.replace(/â‚¹/g, "₹")}
                         </p> */}
-                    </GlassCard>
-                </BackdropGradient>
-                <InteractiveHoverButton onClick={()=> {router.push('/ai-consult')}} className="justify-self-end"  >Apply For Loan</InteractiveHoverButton>
-                
+          </GlassCard>
+        </BackdropGradient>
+        <InteractiveHoverButton
+          onClick={() => {
+            router.push("/ai-consult");
+          }}
+          className="justify-self-end"
+        >
+          Apply For Loan
+        </InteractiveHoverButton>
       </div>
-
     </div>
   );
-}
+};
 
-export const CloseIcon = () => {
+const CloseIcon = () => {
   return (
     <motion.svg
       initial={{
@@ -307,7 +320,4 @@ export const CloseIcon = () => {
   );
 };
 
-
-
-
-export default Page
+export default Page;
